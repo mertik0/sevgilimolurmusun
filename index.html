@@ -15,50 +15,35 @@ body{background:radial-gradient(ellipse at 50% 40%,var(--bg1),var(--bg2));color:
 .h{position:absolute;bottom:-60px;color:var(--rose);opacity:0;animation:rise linear infinite}
 @keyframes rise{0%{transform:translateY(0) rotate(-12deg);opacity:0}10%{opacity:var(--o)}100%{transform:translateY(-115vh) rotate(14deg);opacity:0}}
 
-main{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;padding:2rem 1.5rem;text-align:center}
+main{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.8rem;padding:2rem 1.5rem;text-align:center}
 h1{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-style:italic;font-size:clamp(2.4rem,7vw,4.5rem);line-height:1.1;letter-spacing:.01em}
 
-/* Görsel Galerisi / Grid Yapısı */
-.photo-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.2rem;
-  max-width: 520px;
-  width: 100%;
-}
-@media (max-width: 480px) {
-  .photo-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.8rem;
-  }
-}
-.photo-card {
+/* Tekli Fotoğraf Çerçevesi */
+.photo-frame {
   background: rgba(251, 238, 233, 0.06);
   border: 1px solid rgba(244, 182, 194, 0.25);
-  border-radius: 16px;
-  padding: 0.6rem;
+  border-radius: 20px;
+  padding: 0.8rem;
   backdrop-filter: blur(8px);
-  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-width: 280px;
+  width: 100%;
 }
-.photo-card:hover {
-  transform: translateY(-4px) scale(1.02);
-  border-color: var(--rose);
-  box-shadow: 0 8px 20px rgba(244, 182, 194, 0.15);
-}
-.photo-card img {
+.photo-frame img {
   width: 100%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 14px;
+  transition: opacity 0.5s ease;
 }
-.photo-card span {
+.photo-frame span {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-style: italic;
-  margin-top: 0.5rem;
+  margin-top: 0.6rem;
   color: var(--rose);
 }
 
@@ -90,36 +75,22 @@ button:focus-visible{outline:2px solid var(--rose);outline-offset:4px}
 <main id="home">
   <h1>Sevgilim olur musun?</h1>
 
+  <!-- Tekli Değişen Fotoğraf Çerçevesi -->
+  <div class="photo-frame">
+    <img id="slideshow-img" src="kare.jpg" alt="Fotoğraf" onerror="this.src='https://via.placeholder.com/250?text=Fotoğraf'">
+    <span id="slideshow-text">Kare</span>
+  </div>
+
   <div class="btns">
     <button id="yes">Evet</button>
     <button id="no">Hayır</button>
-  </div>
-
-  <!-- 4 Fotoğraflı Galeri Bölümü -->
-  <div class="photo-grid">
-    <div class="photo-card">
-      <img src="kare.jpg" alt="Kare" onerror="this.src='https://via.placeholder.com/200?text=Kare'">
-      <span>Kare</span>
-    </div>
-    <div class="photo-card">
-      <img src="kamera.jpg" alt="Kamera" onerror="this.src='https://via.placeholder.com/200?text=Kamera'">
-      <span>Kamera</span>
-    </div>
-    <div class="photo-card">
-      <img src="konserve_acacagi.jpg" alt="Kavanoz Açacağı" onerror="this.src='https://via.placeholder.com/200?text=Kavanoz+Açacağı'">
-      <span>Konserve Açacağı</span>
-    </div>
-    <div class="photo-card">
-      <img src="reel_sayilar.jpg" alt="Reel Sayılar" onerror="this.src='https://via.placeholder.com/200?text=Reel+Sayılar'">
-      <span>Reel Sayılar</span>
-    </div>
   </div>
 </main>
 
 <div id="burst"></div>
 
 <section class="screen" id="yesScreen">
-  <img src="opucuk.webp">
+  <img src="opucuk.webp" alt="Öpücük" onerror="this.style.display='none'">
   <h2>Seni çokkkk seviyorum, canım sevgilim ♥</h2>
 </section>
 
@@ -142,26 +113,14 @@ for(let i=0;i<26;i++){
   e.style.animationDelay=(-Math.random()*20)+'s';
   hs.appendChild(e);
 }
-// evet: öpücük gif'i + kalp fışkırması
-$('#yes').onclick=()=>{
-  $('#home').style.display='none';
-  $('#yesScreen').classList.add('on');
-  const b=$('#burst');
-  for(let i=0;i<90;i++){
-    const e=document.createElement('span');e.className='fly';e.textContent=Math.random()<.5?'♥':'❤';
-    const a=Math.random()*Math.PI*2,d=120+Math.random()*Math.min(innerWidth,innerHeight)*.7;
-    e.style.setProperty('--x',Math.cos(a)*d+'px');
-    e.style.setProperty('--y',(Math.sin(a)*d-150)+'px');
-    e.style.setProperty('--r',(Math.random()*120-60)+'deg');
-    e.style.setProperty('--s',(.6+Math.random()*1.4).toFixed(2));
-    e.style.fontSize=(16+Math.random()*30)+'px';
-    e.style.animationDelay=(Math.random()*.4)+'s';
-    b.appendChild(e);
-  }
-};
-// hayır: resim + anasayfaya dön
-$('#no').onclick=()=>$('#noScreen').classList.add('on');
-$('#back').onclick=()=>$('#noScreen').classList.remove('on');
-</script>
-</body>
-</html>
+
+// Fotoğraf Slayt Gösterisi Mantığı
+const photos = [
+  { src: 'kare.jpg', text: 'Kare' },
+  { src: 'kamera.jpg', text: 'Kamera' },
+  { src: 'konserve_acacagi.jpg', text: 'Konserve Açacağı' },
+  { src: 'reel_sayilar.jpg', text: 'Reel Sayılar' }
+];
+
+let currentIndex = 0;
+const img
