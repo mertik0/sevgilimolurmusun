@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sevgilim olur musun?</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg1:#3a0f1e;--bg2:#1e0710;--rose:#f4b6c2;--cream:#fbeee9;--deep:#c2185b}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:radial-gradient(ellipse at 50% 40%,var(--bg1),var(--bg2));color:var(--cream);font-family:'Jost',system-ui,sans-serif;overflow-x:hidden;overflow-y:auto}
+#hearts,#burst{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:1}
+
+.h{position:absolute;bottom:-60px;color:var(--rose);opacity:0;animation:rise linear infinite}
+@keyframes rise{0%{transform:translateY(0) rotate(-12deg);opacity:0}10%{opacity:var(--o)}100%{transform:translateY(-115vh) rotate(14deg);opacity:0}}
+
+main{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;padding:2rem 1.5rem;text-align:center}
+h1{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-style:italic;font-size:clamp(2.4rem,7vw,4.5rem);line-height:1.1;letter-spacing:.01em}
+
+/* Görsel Galerisi / Grid Yapısı */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.2rem;
+  max-width: 520px;
+  width: 100%;
+}
+@media (max-width: 480px) {
+  .photo-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+  }
+}
+.photo-card {
+  background: rgba(251, 238, 233, 0.06);
+  border: 1px solid rgba(244, 182, 194, 0.25);
+  border-radius: 16px;
+  padding: 0.6rem;
+  backdrop-filter: blur(8px);
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.photo-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: var(--rose);
+  box-shadow: 0 8px 20px rgba(244, 182, 194, 0.15);
+}
+.photo-card img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.photo-card span {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  margin-top: 0.5rem;
+  color: var(--rose);
+}
+
+.btns{display:flex;gap:1.2rem;margin-top:0.5rem}
+button{font:500 1rem 'Jost',sans-serif;letter-spacing:.06em;padding:.9rem 2.6rem;border-radius:999px;cursor:pointer;transition:transform .2s,background .2s,color .2s}
+button:focus-visible{outline:2px solid var(--rose);outline-offset:4px}
+#yes{background:var(--rose);color:var(--bg2);border:1px solid var(--rose)}
+#yes:hover{transform:scale(1.07)}
+#no{background:transparent;color:var(--cream);border:1px solid rgba(251,238,233,.45)}
+#no:hover{background:rgba(251,238,233,.1)}
+
+.fly{position:absolute;left:50%;top:55%;color:var(--rose);animation:fly 2.4s cubic-bezier(.15,.7,.3,1) forwards;z-index:10}
+@keyframes fly{to{transform:translate(var(--x),var(--y)) rotate(var(--r)) scale(var(--s));opacity:0}}
+
+.screen{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:1.8rem;padding:1.5rem;text-align:center;background:radial-gradient(ellipse at 50% 40%,var(--bg1),var(--bg2));z-index:5}
+.screen.on{display:flex;animation:fade .5s}
+@keyframes fade{from{opacity:0}}
+.screen img{max-width:min(80vw,360px);max-height:50vh;border-radius:14px;border:1px solid rgba(251,238,233,.25)}
+.screen p{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:clamp(1.8rem,6vw,3rem)}
+#yesScreen{background:transparent}
+#yesScreen h2{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:500;font-size:clamp(2.4rem,8vw,5rem)}
+.back{background:transparent;color:var(--cream);border:1px solid rgba(251,238,233,.45)}
+@media (prefers-reduced-motion:reduce){.h{animation-duration:30s!important}}
+</style>
+</head>
+<body>
+<div id="hearts"></div>
+
+<main id="home">
+  <h1>Sevgilim olur musun?</h1>
+
+  <div class="btns">
+    <button id="yes">Evet</button>
+    <button id="no">Hayır</button>
+  </div>
+
+  <!-- 4 Fotoğraflı Galeri Bölümü -->
+  <div class="photo-grid">
+    <div class="photo-card">
+      <img src="kare.jpg" alt="Kare" onerror="this.src='https://via.placeholder.com/200?text=Kare'">
+      <span>Kare</span>
+    </div>
+    <div class="photo-card">
+      <img src="kamera.jpg" alt="Kamera" onerror="this.src='https://via.placeholder.com/200?text=Kamera'">
+      <span>Kamera</span>
+    </div>
+    <div class="photo-card">
+      <img src="konserve_acacagi.jpg" alt="Kavanoz Açacağı" onerror="this.src='https://via.placeholder.com/200?text=Kavanoz+Açacağı'">
+      <span>Konserve Açacağı</span>
+    </div>
+    <div class="photo-card">
+      <img src="reel_sayilar.jpg" alt="Reel Sayılar" onerror="this.src='https://via.placeholder.com/200?text=Reel+Sayılar'">
+      <span>Reel Sayılar</span>
+    </div>
+  </div>
+</main>
+
+<div id="burst"></div>
+
+<section class="screen" id="yesScreen">
+  <img src="opucuk.webp">
+  <h2>Seni çokkkk seviyorum, canım sevgilim ♥</h2>
+</section>
+
+<section class="screen" id="noScreen">
+  <img src="elimidud.jpg" alt="" onerror="this.style.display='none'">
+  <p>miyav..</p>
+  <button class="back" id="back">🥺</button>
+</section>
+
+<script>
+const $=s=>document.querySelector(s);
+// arka plan kalpleri
+const hs=$('#hearts');
+for(let i=0;i<26;i++){
+  const e=document.createElement('span');e.className='h';e.textContent='♥';
+  e.style.left=Math.random()*100+'%';
+  e.style.fontSize=(14+Math.random()*34)+'px';
+  e.style.setProperty('--o',(.15+Math.random()*.4).toFixed(2));
+  e.style.animationDuration=(9+Math.random()*11)+'s';
+  e.style.animationDelay=(-Math.random()*20)+'s';
+  hs.appendChild(e);
+}
+// evet: öpücük gif'i + kalp fışkırması
+$('#yes').onclick=()=>{
+  $('#home').style.display='none';
+  $('#yesScreen').classList.add('on');
+  const b=$('#burst');
+  for(let i=0;i<90;i++){
+    const e=document.createElement('span');e.className='fly';e.textContent=Math.random()<.5?'♥':'❤';
+    const a=Math.random()*Math.PI*2,d=120+Math.random()*Math.min(innerWidth,innerHeight)*.7;
+    e.style.setProperty('--x',Math.cos(a)*d+'px');
+    e.style.setProperty('--y',(Math.sin(a)*d-150)+'px');
+    e.style.setProperty('--r',(Math.random()*120-60)+'deg');
+    e.style.setProperty('--s',(.6+Math.random()*1.4).toFixed(2));
+    e.style.fontSize=(16+Math.random()*30)+'px';
+    e.style.animationDelay=(Math.random()*.4)+'s';
+    b.appendChild(e);
+  }
+};
+// hayır: resim + anasayfaya dön
+$('#no').onclick=()=>$('#noScreen').classList.add('on');
+$('#back').onclick=()=>$('#noScreen').classList.remove('on');
+</script>
+</body>
+</html>
