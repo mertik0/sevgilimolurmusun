@@ -15,39 +15,35 @@ body{background:radial-gradient(ellipse at 50% 40%,var(--bg1),var(--bg2));color:
 .h{position:absolute;bottom:-60px;color:var(--rose);opacity:0;animation:rise linear infinite}
 @keyframes rise{0%{transform:translateY(0) rotate(-12deg);opacity:0}10%{opacity:var(--o)}100%{transform:translateY(-115vh) rotate(14deg);opacity:0}}
 
-main{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.8rem;padding:2rem 1.5rem;text-align:center}
+main{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;padding:2rem 1.5rem;text-align:center}
 h1{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-style:italic;font-size:clamp(2.4rem,7vw,4.5rem);line-height:1.1;letter-spacing:.01em}
 
-/* Tekli Fotoğraf Çerçevesi */
-.photo-frame {
-  background: rgba(251, 238, 233, 0.06);
-  border: 1px solid rgba(244, 182, 194, 0.25);
-  border-radius: 20px;
-  padding: 0.8rem;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 280px;
-  width: 100%;
+/* Tek fotoğraf çerçevesi (slayt) */
+.photo-card{
+  background:rgba(251,238,233,.06);
+  border:1px solid rgba(244,182,194,.25);
+  border-radius:16px;
+  padding:.7rem;
+  backdrop-filter:blur(8px);
+  width:min(80vw,340px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  box-shadow:0 8px 20px rgba(244,182,194,.12);
 }
-.photo-frame img {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  border-radius: 14px;
-  transition: opacity 0.5s ease;
-}
-.photo-frame span {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.2rem;
-  font-style: italic;
-  margin-top: 0.6rem;
-  color: var(--rose);
+.slides{position:relative;width:100%;aspect-ratio:1/1;border-radius:10px;overflow:hidden}
+.slides img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s ease}
+.slides img.active{opacity:1}
+#caption{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.2rem;
+  font-style:italic;
+  margin-top:.6rem;
+  color:var(--rose);
+  min-height:1.5em;
 }
 
-.btns{display:flex;gap:1.2rem;margin-top:0.5rem}
+.btns{display:flex;gap:1.2rem;margin-top:.5rem}
 button{font:500 1rem 'Jost',sans-serif;letter-spacing:.06em;padding:.9rem 2.6rem;border-radius:999px;cursor:pointer;transition:transform .2s,background .2s,color .2s}
 button:focus-visible{outline:2px solid var(--rose);outline-offset:4px}
 #yes{background:var(--rose);color:var(--bg2);border:1px solid var(--rose)}
@@ -75,16 +71,22 @@ button:focus-visible{outline:2px solid var(--rose);outline-offset:4px}
 <main id="home">
   <h1>Sevgilim olur musun?</h1>
 
-  <!-- Tekli Değişen Fotoğraf Çerçevesi -->
-  <div class="photo-frame">
-    <img id="slideshow-img" src="kare.jpg" alt="Fotoğraf" onerror="this.src='https://via.placeholder.com/250?text=Fotoğraf'">
-    <span id="slideshow-text">Kare</span>
-  </div>
-
   <div class="btns">
     <button id="yes">Evet</button>
     <button id="no">Hayır</button>
+  </div>  
+
+  <!-- Tek çerçeve: 4 fotoğraf sırayla, 1 saniye arayla -->
+  <div class="photo-card">
+    <div class="slides" id="slides">
+      <img class="active" src="kare.jpg" alt="Kare" data-caption="Kare" onerror="this.src='https://via.placeholder.com/400?text=Kare'">
+      <img src="kamera.jpg" alt="Kamera" data-caption="Kamera" onerror="this.src='https://via.placeholder.com/400?text=Kamera'">
+      <img src="konserve_acacagi.jpg" alt="Konserve Açacağı" data-caption="Konserve Açacağı" onerror="this.src='https://via.placeholder.com/400?text=Konserve+Açacağı'">
+      <img src="reel_sayilar.jpg" alt="Reel Sayılar" data-caption="Reel Sayılar" onerror="this.src='https://via.placeholder.com/400?text=Reel+Sayılar'">
+    </div>
+    <span id="caption">Kare</span>
   </div>
+
 </main>
 
 <div id="burst"></div>
@@ -114,13 +116,37 @@ for(let i=0;i<26;i++){
   hs.appendChild(e);
 }
 
-// Fotoğraf Slayt Gösterisi Mantığı
-const photos = [
-  { src: 'kare.jpg', text: 'Kare' },
-  { src: 'kamera.jpg', text: 'Kamera' },
-  { src: 'konserve_acacagi.jpg', text: 'Konserve Açacağı' },
-  { src: 'reel_sayilar.jpg', text: 'Reel Sayılar' }
-];
+// fotoğraf slaytı: her 1 saniyede bir sıradaki fotoğraf
+const slides=[...document.querySelectorAll('#slides img')];
+const caption=$('#caption');
+let idx=0;
+setInterval(()=>{
+  slides[idx].classList.remove('active');
+  idx=(idx+1)%slides.length;
+  slides[idx].classList.add('active');
+  caption.textContent=slides[idx].dataset.caption;
+},1000);
 
-let currentIndex = 0;
-const img
+// evet: öpücük + kalp fışkırması
+$('#yes').onclick=()=>{
+  $('#home').style.display='none';
+  $('#yesScreen').classList.add('on');
+  const b=$('#burst');
+  for(let i=0;i<90;i++){
+    const e=document.createElement('span');e.className='fly';e.textContent=Math.random()<.5?'♥':'❤';
+    const a=Math.random()*Math.PI*2,d=120+Math.random()*Math.min(innerWidth,innerHeight)*.7;
+    e.style.setProperty('--x',Math.cos(a)*d+'px');
+    e.style.setProperty('--y',(Math.sin(a)*d-150)+'px');
+    e.style.setProperty('--r',(Math.random()*120-60)+'deg');
+    e.style.setProperty('--s',(.6+Math.random()*1.4).toFixed(2));
+    e.style.fontSize=(16+Math.random()*30)+'px';
+    e.style.animationDelay=(Math.random()*.4)+'s';
+    b.appendChild(e);
+  }
+};
+// hayır: resim + anasayfaya dön
+$('#no').onclick=()=>$('#noScreen').classList.add('on');
+$('#back').onclick=()=>$('#noScreen').classList.remove('on');
+</script>
+</body>
+</html>
